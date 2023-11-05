@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.nextjs.appName }} # Name of the deployment
+  labels:
+    app: {{ .Values.nextjs.appName }} # Name of your application
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Values.nextjs.appName }} # Name of your application
+  replicas: {{ .Values.nextjs.replicas }} # Number of replicas
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.nextjs.appName }} # Name of your application
+    spec:
+      containers:
+      # Containers are the individual pieces of your application that you want
+      # to run.
+      - name: {{ .Values.nextjs.appName }} # Name of the container
+        image: {{ .Values.nextjs.image }}
+        ports:
+        # Ports are the ports that your application uses.
+        - containerPort: {{ .Values.nextjs.containerPort }} # The port that your application uses
+      imagePullSecrets:
+        - name: docker-regcred

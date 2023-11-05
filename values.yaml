@@ -1,0 +1,21 @@
+email: your-mail@web.com
+
+api:
+  appName: nice-name
+  host: public-url
+  replicas: 1
+  image: image-name
+  containerPort: 80
+  jwksUrl: required-for-jwks
+
+frontend:
+  appName: nice-name
+  host: public-url
+  replicas: 1
+  image: image-name
+
+postgresql:
+  auth:
+    database: database-name
+    enablePostgresUser: true
+    postgresPassword: very-secret-password

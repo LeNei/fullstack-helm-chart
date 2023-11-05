@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.api.appName }} # Name of the deployment
+  labels:
+    app: {{ .Values.api.appName }} # Name of your application
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Values.api.appName }} # Name of your application
+  replicas: {{ .Values.api.replicas }} # Number of replicas
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.api.appName }} # Name of your application
+    spec:
+      containers:
+      # Containers are the individual pieces of your application that you want
+      # to run.
+      - name: {{ .Values.api.appName }} # Name of the container
+        image: {{ .Values.api.image }}
+        ports:
+        # Ports are the ports that your application uses.
+        - containerPort: {{ .Values.api.containerPort }} # The port that your application uses
+        env:
+          - name: APP_ENVIRONMENT
+            value: "production"
+          - name: APP_APPLICATION__PORT
+            value: "{{ .Values.api.containerPort }}"
+          - name: APP_DATABASE__HOST
+            value: "{{ .Release.Name }}-postgresql"
+          - name: APP_DATABASE__USERNAME
+            value: "postgres"
+          - name: APP_DATABASE__PASSWORD
+            valueFrom:
+                secretKeyRef:
+                  name: "{{ .Release.Name }}-postgresql"
+                  key: postgres-password
+          - name: APP_DATABASE__DATABASE_NAME
+            value: "{{ .Values.postgresql.auth.database }}"
+          - name: APP_DATABASE__REQUIRE_SSL
+            value: "false"
+          - name: APP_AUTH__JWKS_URL
+            value: "{{ .Values.api.jwksUrl }}"
+          - name: CARGO_MANIFEST_DIR
+            value: "/app"
+      imagePullSecrets:
+        - name: docker-regcred
